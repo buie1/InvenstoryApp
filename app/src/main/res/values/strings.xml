@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">InvenStory</string>
+    <string name="List_All">List ALL</string>
+    <string name="Add">Add</string>
 </resources>
