@@ -2,6 +2,7 @@ package ece651.duke.invenstory;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -704,6 +705,46 @@ public class ThumbnailGenFragment extends Fragment
         }catch(CameraAccessException e){
             e.printStackTrace();
         }
+    }
+
+    private void unlockFocus() {
+        try{
+            //Reset auto-focus trigger
+            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+                    CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
+            setAutoFlash(mPreviewRequestBuilder);
+            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
+                    mBackgroundHandler);
+            mState = STATE_PREVIEW;
+            mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback,
+                    mBackgroundHandler);
+        }catch (CameraAccessException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.picture: {
+                takePicture();
+                break;
+            }
+            case R.id.info: {
+                Activity activity = getActivity();
+                if (null != activity) {
+                    new AlertDialog.Builder(activity)
+                            .setMessage(R.string.intro_message)
+                            .setPositiveButton(android.R.string.ok,null)
+                            .show();
+                }
+                break;
+            }
+        }
+    }
+
+    private void setAutoFlash(CaptureRequest.Builder requestBuilder){
+
     }
 
 
