@@ -1,8 +1,11 @@
 package ece651.duke.invenstory;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
 
 /**
  * Created by Young-hoon Kim on 2/19/2016.
@@ -28,6 +31,7 @@ public class DBHelper extends SQLiteOpenHelper{
                 + Item.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + Item.KEY_Title + " TEXT, "
                 + Item.KEY_Author + " TEXT, "
+                + Item.KEY_Quantity + " TEXT, "
                 + Item.KEY_Price + " INTEGER )";
         db.execSQL(CREATE_TABLE_ITEM);
 
@@ -39,5 +43,30 @@ public class DBHelper extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXISTS " + Item.TABLE);
         // Create tables again
         onCreate(db);
+    }
+
+    public Cursor getData(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + Item.TABLE +" where id="+id+"", null );
+        return res;
+    }
+
+    public ArrayList<String> getAllCotacts()
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + Item.TABLE, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            //String test_string = "THIS IS A TEST THING";
+            String Title = res.getString(res.getColumnIndex(Item.KEY_Title));
+            array_list.add(Title);
+            //array_list.add(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME) + res.getColumnIndex(CONTACTS_COLUMN_PHONE)));
+            res.moveToNext();
+        }
+        return array_list;
     }
 }

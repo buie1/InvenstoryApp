@@ -21,6 +21,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener{
 
         camera.setOnClickListener(this);
         list.setOnClickListener(this);
+
+        this.deleteDatabase("collection.db");
     }
 
     @Override
@@ -28,7 +30,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener{
         switch(v.getId()){
             case R.id.btnCamera:
                 //Do stuff for if camera button is clicked
-                startActivity(new Intent(this, Camera.class));
+
                 break;
             case R.id.btnList:
                 startActivity(new Intent(this, ShowList.class));

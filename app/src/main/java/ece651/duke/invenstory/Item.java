@@ -8,15 +8,17 @@ public class Item {
     public static final String TABLE = "ITEM";
 
     //Label Table Column Names
-    public static final String KEY_ID = "ID";
+    public static final String KEY_ID = "id";
     public static final String KEY_Title = "Title";
     public static final String KEY_Author = "Author";
+    public static final String KEY_Quantity = "Quantity";
     public static final String KEY_Price = "Price";
 
     //property to help us keep data
-    public int item_ID;
+    public int id;
     public String item_Title;
     public String author;
+    public int quantity;
     public int price;
 
 }

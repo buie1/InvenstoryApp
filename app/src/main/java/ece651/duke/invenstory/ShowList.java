@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -23,8 +24,9 @@ import java.util.List;
  */
 public class ShowList extends AppCompatActivity implements View.OnClickListener{
 
-    Button btnAdd, btnGetAll;
+    Button btnAdd, btnRefresh;
     TextView item_id;
+    DBHelper mydb;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,8 +37,33 @@ public class ShowList extends AppCompatActivity implements View.OnClickListener{
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(this);
 
-        btnGetAll = (Button) findViewById(R.id.btnGetAll);
-        btnGetAll.setOnClickListener(this);
+
+        btnRefresh = (Button) findViewById(R.id.btnRefresh);
+        btnRefresh.setOnClickListener(this);
+
+        // CREATE NEW DB HELPER
+        //CALL DB.SHOWUPDATEDLIST()
+
+        mydb = new DBHelper(this);
+        ArrayList array_list = mydb.getAllCotacts();
+        ArrayAdapter arrayAdapter=new ArrayAdapter(this,android.R.layout.simple_list_item_1, array_list);
+        list.setAdapter(arrayAdapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                // TODO Auto-generated method stub
+                int id_To_Search = arg2 + 1;
+
+                Bundle dataBundle = new Bundle();
+                dataBundle.putInt("id", id_To_Search);
+
+                Intent intent = new Intent(getApplicationContext(), DetailedListView.class);
+
+                intent.putExtras(dataBundle);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -44,35 +71,31 @@ public class ShowList extends AppCompatActivity implements View.OnClickListener{
         switch (v.getId()){
             case R.id.btnAdd:
                 Intent intent = new Intent(this, DetailedListView.class);
-                intent.putExtra("item_Id",0);
+                intent.putExtra("ID",0);
                 startActivity(intent);
                 break;
 
-            case R.id.btnGetAll:
-                Toast.makeText(this,"LIST FUNCTION CURRENTLY UNAVAILABLE",Toast.LENGTH_SHORT).show();
+            case R.id.btnRefresh:
+                mydb = new DBHelper(this);
+                ListView list = (ListView)findViewById(R.id.list);
+                ArrayList array_list = mydb.getAllCotacts();
+                ArrayAdapter arrayAdapter=new ArrayAdapter(this,android.R.layout.simple_list_item_1, array_list);
+                list.setAdapter(arrayAdapter);
+                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                        // TODO Auto-generated method stub
+                        int id_To_Search = arg2 + 1;
 
-                /* WORK IN PROGRESS!!!!!!!!!!!!!!!
-                CollectionFunction repo = new CollectionFunction(this);
+                        Bundle dataBundle = new Bundle();
+                        dataBundle.putInt("id", id_To_Search);
 
-                ArrayList<HashMap<String, String>> itemList =  repo.getItemList();
-                if(itemList.size()!=0) {
-                    ListView lv = (ListView)findViewById(R.id.list);
-                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            item_id = (TextView) view.findViewById(R.id.item_Id);
-                            String itemID = item_id.getText().toString();
-                            Intent objIndent = new Intent(getApplicationContext(), DetailedListView.class);
-                            objIndent.putExtra("Item Number", Integer.parseInt(itemID));
-                            startActivity(objIndent);
-                        }
-                    });
-                    ListAdapter adapter = new SimpleAdapter( this,itemList, R.layout.view_item, new String[] { "id","Title"}, new int[] {R.id.item_Id, R.id.item_name});
-                    lv.setAdapter(adapter);
-                }else{
-                    Toast.makeText(this, "No Item!", Toast.LENGTH_SHORT).show();
-                }
-                */
+                        Intent intent = new Intent(getApplicationContext(), DetailedListView.class);
+
+                        intent.putExtras(dataBundle);
+                        startActivity(intent);
+                    }
+                });
                 break;
 
         }

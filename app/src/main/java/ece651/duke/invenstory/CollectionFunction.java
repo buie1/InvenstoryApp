@@ -19,18 +19,20 @@ public class CollectionFunction {
         dbHelper = new DBHelper(context);
     }
 
-    public int insert(Item item){
+    public boolean insert(Item item){
         //Open connection to write data
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Item.KEY_Title, item.item_Title);
         values.put(Item.KEY_Author, item.author);
+        values.put(Item.KEY_Quantity, item.quantity);
         values.put(Item.KEY_Price, item.price);
 
         // Inserting Row
         long item_Id = db.insert(Item.TABLE, null, values);
         db.close(); // Closing database connection
-        return (int) item_Id;
+        return true;
+        //return (int) item_Id;
     }
 
     public void delete(int item_ID){
@@ -49,7 +51,7 @@ public class CollectionFunction {
         values.put(Item.KEY_Price, item.price);
 
         // It's a good practice to use parameter ?, instead of concatenate string
-        db.update(Item.TABLE, values, Item.KEY_ID + "= ?", new String[] { String.valueOf(item.item_ID) });
+        db.update(Item.TABLE, values, Item.KEY_ID + "= ?", new String[] { String.valueOf(item.id) });
         db.close(); // Closing database connection
     }
 
@@ -103,7 +105,7 @@ public class CollectionFunction {
 
         if (cursor.moveToFirst()) {
             do {
-                item.item_ID =cursor.getInt(cursor.getColumnIndex(Item.KEY_ID));
+                item.id =cursor.getInt(cursor.getColumnIndex(Item.KEY_ID));
                 item.item_Title =cursor.getString(cursor.getColumnIndex(Item.KEY_Title));
                 item.author  =cursor.getString(cursor.getColumnIndex(Item.KEY_Author));
                 item.price =cursor.getInt(cursor.getColumnIndex(Item.KEY_Price));
