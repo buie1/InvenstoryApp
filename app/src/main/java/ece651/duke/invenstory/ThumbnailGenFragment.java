@@ -3,8 +3,11 @@ package ece651.duke.invenstory;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
@@ -21,10 +24,13 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -42,9 +48,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -353,7 +363,7 @@ public class ThumbnailGenFragment extends Fragment
         if(FragmentCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)){
             new ConfirmationDialog().show(getChildFragmentManager(),FRAGMENT_DIALOG);
         }else{
-            FragmentCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},
+            FragmentCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
                     REQUEST_CAMERA_PERMISSION);
         }
     }
@@ -390,6 +400,12 @@ public class ThumbnailGenFragment extends Fragment
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
                     continue;
                 }
+
+                StreamConfigurationMap map = characteristics.get(
+                        CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+                if (map == null){
+                    continue;
+                }
                 //for still images use largest available size
                 Size largest = Collections.max(
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
@@ -424,14 +440,14 @@ public class ThumbnailGenFragment extends Fragment
 
                 Point displaySize = new Point();
                 activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
-                int rotatePreviewWidth = width;
-                int rotatePreviewHeight = height;
+                int rotatedPreviewWidth = width;
+                int rotatedPreviewHeight = height;
                 int maxPreviewWidth = displaySize.x;
                 int maxPreviewHeight = displaySize.y;
 
                 if (swappedDimensions) {
-                    rotatePreviewWidth = height;
-                    rotatePreviewHeight = width;
+                    rotatedPreviewWidth = height;
+                    rotatedPreviewHeight = width;
                     maxPreviewHeight = displaySize.x;
                     maxPreviewWidth = displaySize.y;
                 }
@@ -445,8 +461,8 @@ public class ThumbnailGenFragment extends Fragment
                 // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
-                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfactTexture.class),
-                        rotatedPreviewWidth, rotatePreviewHeight, maxPreviewWidth,
+                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+                        rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
                         maxPreviewHeight, largest);
 
                 //Fit the aspect ratio of TextureView to the size of preview we picked
@@ -607,7 +623,7 @@ public class ThumbnailGenFragment extends Fragment
 
     private void configureTransform(int viewWidth, int viewHeight){
         Activity activity = getActivity();
-        if (null == mTextureView || null == mPreviewSize || null = activity){
+        if (null == mTextureView || null == mPreviewSize || null == activity){
             return;
         }
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -744,7 +760,114 @@ public class ThumbnailGenFragment extends Fragment
     }
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder){
+        if(mFlashSupported){
+            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+        }
+    }
 
+    private static class ImageSaver implements Runnable {
+        //the jpeg image
+        private final Image mImage;
+        //file we will save image into
+        private final File mFile;
+
+        public ImageSaver(Image image, File file){
+            mImage = image;
+            mFile = file;
+        }
+
+        @Override
+        public void run() {
+            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+            byte[] bytes = new byte[buffer.remaining()];
+            buffer.get(bytes);
+            FileOutputStream output = null;
+            try{
+                output = new FileOutputStream(mFile);
+                output.write(bytes);
+            }catch (IOException e){
+                e.printStackTrace();
+            } finally {
+                mImage.close();
+                if(null != output){
+                    try{
+                        output.close();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    //Compares two Sizes based on their area (helper function)
+    static class CompareSizesByArea implements Comparator<Size> {
+
+        @Override
+        public int compare(Size lhs, Size rhs) {
+            //We cast here to ensure no overflow
+            return Long.signum((long) lhs.getWidth()*lhs.getHeight() -
+                    (long) rhs.getWidth() * rhs.getHeight());
+        }
+    }
+
+    //Show error message dialog
+    public static class ErrorDialog extends DialogFragment {
+        private static final String ARG_MESSAGE ="message";
+
+        public static ErrorDialog newInstance(String message){
+            ErrorDialog dialog = new ErrorDialog();
+            Bundle args = new Bundle();
+            args.putString(ARG_MESSAGE, message);
+            dialog.setArguments(args);
+            return dialog;
+        }
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Activity activity = getActivity();
+            return new AlertDialog.Builder(activity)
+                    .setMessage(getArguments().getString(ARG_MESSAGE))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            activity.finish();
+                        }
+                    })
+                    .create();
+        }
+    }
+
+    //Show ok/cancel dialog about camera permission
+
+    public static class ConfirmationDialog extends DialogFragment{
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Fragment parent = getParentFragment();
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.request_permission)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            FragmentCompat.requestPermissions(parent,
+                                    new String[]{Manifest.permission.CAMERA},
+                                    REQUEST_CAMERA_PERMISSION);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Activity activity = parent.getActivity();
+                                    if (activity != null){
+                                        activity.finish();
+                                    }
+                                }
+                            })
+                    .create();
+        }
     }
 
 

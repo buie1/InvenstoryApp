@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ece651.duke.invenstory">
-    // The camera feature is needed for the app however if not available can still work!
-    // Denoted by android:require=false
     <uses-feature android:name ="android.hardware.camera2" android:required="false"> </uses-feature>
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
@@ -19,10 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomePage">
-        </activity>
+        <activity android:name=".HomePage"></activity>
         <activity android:name=".ShowList"/>
         <activity android:name=".DetailedListView"/>
+        <activity android:name=".PhotoActivity"/>
     </application>
 
 </manifest>
