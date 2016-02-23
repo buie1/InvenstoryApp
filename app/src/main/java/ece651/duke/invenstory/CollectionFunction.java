@@ -52,6 +52,7 @@ public class CollectionFunction {
 
         // It's a good practice to use parameter ?, instead of concatenate string
         db.update(Item.TABLE, values, Item.KEY_ID + "= ?", new String[]{String.valueOf(item.id)});
+
         db.close(); // Closing database connection
     }
 
@@ -104,6 +105,7 @@ public class CollectionFunction {
         Item item = new Item();
 
         Cursor cursor = db.rawQuery(selectQuery, new String[] { String.valueOf(Id) } );
+
         if(cursor != null) {
             if (cursor.moveToFirst()) {
                 do {

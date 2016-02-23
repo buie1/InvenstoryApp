@@ -51,7 +51,9 @@ public class DBHelper extends SQLiteOpenHelper{
         return res;
     }
 
+
     public ArrayList<String> getAllContacts()
+
     {
         ArrayList<String> array_list = new ArrayList<String>();
 
