@@ -35,7 +35,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import android.support.v13.app.FragmentCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
@@ -339,6 +338,12 @@ public class ThumbnailGenFragment extends Fragment
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
         startBackgroundThread();
         // When the screen is turned off and turned back on, the SurfaceTexture is already
