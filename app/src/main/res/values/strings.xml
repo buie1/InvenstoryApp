@@ -2,6 +2,11 @@
     <string name="app_name">InvenStory</string>
     <string name="List_All">List ALL</string>
     <string name="Add">Add</string>
+    <string name="UpdateList">Update List</string>
+    <string name="BackToHome">Back to Home</string>
+    <string name="deleteContact">Are you sure, you want to delete it.</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="picture">Picture</string>
     <string name="description_info">Info</string>
     <string name="request_permission">This sample needs camera permission.</string>
