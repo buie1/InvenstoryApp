@@ -51,7 +51,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return res;
     }
 
-    public ArrayList<String> getAllCotacts()
+    public ArrayList<String> getAllContacts()
     {
         ArrayList<String> array_list = new ArrayList<String>();
 
@@ -69,4 +69,24 @@ public class DBHelper extends SQLiteOpenHelper{
         }
         return array_list;
     }
+
+    public ArrayList<Integer> getAllIDs()
+    {
+        ArrayList<Integer> array_list = new ArrayList<Integer>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + Item.TABLE, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            //String test_string = "THIS IS A TEST THING";
+            Integer ID = res.getInt(res.getColumnIndex(Item.KEY_ID));
+            array_list.add(ID);
+            //array_list.add(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME) + res.getColumnIndex(CONTACTS_COLUMN_PHONE)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
 }

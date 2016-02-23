@@ -38,7 +38,7 @@ public class CollectionFunction {
     public void delete(int item_ID){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         // It's a good practice to use parameter ?, instead of concatenate string
-        db.delete(Item.TABLE, Item.KEY_ID + "= ?", new String[] { String.valueOf(item_ID) });
+        db.delete(Item.TABLE, Item.KEY_ID + "= ?", new String[]{String.valueOf(item_ID)});
         db.close(); // Closing database connection
     }
 
@@ -51,7 +51,7 @@ public class CollectionFunction {
         values.put(Item.KEY_Price, item.price);
 
         // It's a good practice to use parameter ?, instead of concatenate string
-        db.update(Item.TABLE, values, Item.KEY_ID + "= ?", new String[] { String.valueOf(item.id) });
+        db.update(Item.TABLE, values, Item.KEY_ID + "= ?", new String[]{String.valueOf(item.id)});
         db.close(); // Closing database connection
     }
 
@@ -71,14 +71,16 @@ public class CollectionFunction {
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
 
-        if (cursor.moveToFirst()) {
-            do {
-                HashMap<String, String> item = new HashMap<String, String>();
-                item.put("id", cursor.getString(cursor.getColumnIndex(Item.KEY_ID)));
-                item.put("title", cursor.getString(cursor.getColumnIndex(Item.KEY_Title)));
-                itemList.add(item);
+        if(cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    HashMap<String, String> item = new HashMap<String, String>();
+                    item.put("id", cursor.getString(cursor.getColumnIndex(Item.KEY_ID)));
+                    item.put("title", cursor.getString(cursor.getColumnIndex(Item.KEY_Title)));
+                    itemList.add(item);
 
-            } while (cursor.moveToNext());
+                } while (cursor.moveToNext());
+            }
         }
 
         cursor.close();
@@ -102,15 +104,16 @@ public class CollectionFunction {
         Item item = new Item();
 
         Cursor cursor = db.rawQuery(selectQuery, new String[] { String.valueOf(Id) } );
+        if(cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    item.id = cursor.getInt(cursor.getColumnIndex(Item.KEY_ID));
+                    item.item_Title = cursor.getString(cursor.getColumnIndex(Item.KEY_Title));
+                    item.author = cursor.getString(cursor.getColumnIndex(Item.KEY_Author));
+                    item.price = cursor.getInt(cursor.getColumnIndex(Item.KEY_Price));
 
-        if (cursor.moveToFirst()) {
-            do {
-                item.id =cursor.getInt(cursor.getColumnIndex(Item.KEY_ID));
-                item.item_Title =cursor.getString(cursor.getColumnIndex(Item.KEY_Title));
-                item.author  =cursor.getString(cursor.getColumnIndex(Item.KEY_Author));
-                item.price =cursor.getInt(cursor.getColumnIndex(Item.KEY_Price));
-
-            } while (cursor.moveToNext());
+                } while (cursor.moveToNext());
+            }
         }
 
         cursor.close();

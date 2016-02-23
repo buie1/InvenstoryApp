@@ -35,4 +35,12 @@
         android:layout_toRightOf="@+id/btnAdd"
         android:layout_toEndOf="@+id/btnAdd" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/BackToHome"
+        android:id="@+id/btnHome"
+        android:layout_alignTop="@+id/btnRefresh"
+        android:layout_toEndOf="@+id/btnRefresh" />
+
 </RelativeLayout>
