@@ -52,7 +52,6 @@ public class CollectionFunction {
 
         // It's a good practice to use parameter ?, instead of concatenate string
         db.update(Item.TABLE, values, Item.KEY_ID + "= ?", new String[]{String.valueOf(item.id)});
-
         db.close(); // Closing database connection
     }
 
