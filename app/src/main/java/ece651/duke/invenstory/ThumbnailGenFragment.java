@@ -8,8 +8,10 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -28,6 +30,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.preference.DialogPreference;
@@ -50,10 +53,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +67,9 @@ import java.util.concurrent.TimeUnit;
  * Created by jonbuie on 2/21/16.
  * adapted from https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/
  * main/java/com/example/android/camera2basic/Camera2BasicFragment.java
+ *
+ * some adaptions from http://developer.android.com/training/camera/photobasics.html#TaskPath
+ *
  */
 public class ThumbnailGenFragment extends Fragment
         implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
@@ -179,7 +187,12 @@ public class ThumbnailGenFragment extends Fragment
             = new ImageReader.OnImageAvailableListener(){
         @Override
         public void onImageAvailable(ImageReader reader) {
-            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(),mFile));
+            final int result = 1;
+            // Do I want to keep the image or nah?
+            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+            Intent mSendForPreview = new Intent(getActivity(), PreviewImage.class);
+            mSendForPreview.putExtra("file",mFile);
+            startActivityForResult(mSendForPreview, result);
         }
     };
 
@@ -336,10 +349,36 @@ public class ThumbnailGenFragment extends Fragment
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
 
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        //Create Image file name
+        String timestamp = new SimpleDateFormat("yyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timestamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+
+        //save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
+
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+        //mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+        try{
+            mFile = createImageFile();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -710,6 +749,7 @@ public class ThumbnailGenFragment extends Fragment
 
             CameraCaptureSession.CaptureCallback CaptureCallback
                     = new CameraCaptureSession.CaptureCallback(){
+
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
