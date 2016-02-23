@@ -22,6 +22,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener{
 
         camera.setOnClickListener(this);
         list.setOnClickListener(this);
+
+        this.deleteDatabase("collection.db");
     }
 
     @Override

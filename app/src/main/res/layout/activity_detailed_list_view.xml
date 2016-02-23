@@ -34,12 +34,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Price"
+        android:text="Quantity"
         android:id="@+id/textView3"
         android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="29dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Price"
+        android:id="@+id/textView4"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="29dp"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -70,12 +81,12 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editTextPrice"
+        android:id="@+id/editTextQuantity"
         android:layout_alignBottom="@+id/textView3"
-        android:layout_alignLeft="@+id/editTextAuthor"
-        android:layout_alignStart="@+id/editTextAuthor"
         android:layout_alignRight="@+id/editTextAuthor"
-        android:layout_alignEnd="@+id/editTextAuthor" />
+        android:layout_alignEnd="@+id/editTextAuthor"
+        android:layout_toRightOf="@+id/textView3"
+        android:layout_toEndOf="@+id/textView3" />
 
     <Button
         android:layout_width="wrap_content"
@@ -83,7 +94,8 @@
         android:text="Save"
         android:id="@+id/btnSave"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/btnClose" />
+        android:layout_toLeftOf="@+id/btnDelete"
+        android:layout_toStartOf="@+id/btnDelete" />
 
     <Button
         android:layout_width="wrap_content"
@@ -99,7 +111,21 @@
         android:layout_height="wrap_content"
         android:text="Delete"
         android:id="@+id/btnDelete"
-        android:layout_alignTop="@+id/btnSave"
-        android:layout_toLeftOf="@+id/btnSave" />
+        android:layout_alignTop="@+id/btnClose"
+        android:layout_toLeftOf="@+id/btnClose"
+        android:layout_toStartOf="@+id/btnClose" />
+
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editTextPrice"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_alignRight="@+id/editTextQuantity"
+        android:layout_alignEnd="@+id/editTextQuantity" />
 
 </RelativeLayout>
