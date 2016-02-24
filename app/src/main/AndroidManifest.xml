@@ -23,6 +23,8 @@
         <activity android:name=".ShowList"/>
         <activity android:name=".DetailedListView"/>
         <activity android:name=".PhotoActivity"/>
+        <activity android:name=".Register"/>
+        <activity android:name=".Login"/>
     </application>
 
 </manifest>

@@ -9,12 +9,19 @@
     <string name="no">No</string>
     <string name="picture">Picture</string>
     <string name="description_info">Info</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_register">Register</string>
     <string name="request_permission">This sample needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
 
     <string name="intro_message">
         <![CDATA[
 
+
+            *** Note: for sprint one, the Camera is able to store images on a physical device.
+            For emulator use, "picture" button does not save an image. ***
+
+            Use back arrow to return to previous page.
 
             Take a picture of your item.  This will help identify a product and serve as a thumbnail
             for the object in the inventory database.
