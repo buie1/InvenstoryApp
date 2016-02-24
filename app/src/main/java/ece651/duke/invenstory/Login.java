@@ -38,7 +38,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
             case R.id.bLogin:
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
-
                 /*String companyName = etCompany.getText().toString();
                 User user = new User(username, password);
                 Company company = new Company(companyName, null, user);
@@ -46,8 +45,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 authenticate(user);*/
                 User user = new User(username, password);
                 userLocalStore = new UserLocalStore(this);
-                if((username.equals("admin")) && username.equals("admin")) {
-
+                if((username.equals("admin")) && password.equals("admin")) {
                     startActivity(new Intent(this, HomePage.class));
                     break;
                 }
@@ -55,7 +53,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 break;
 
             case R.id.tvRegisterLink:
-
                 startActivity(new Intent(this, Register.class));
                 break;
 

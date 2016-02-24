@@ -1,30 +1,59 @@
 TEAM: RUSH HOUR IV
+Project: Invenstory
+Version: 0.1
 
+Members:
 Jonathan Buie
 Young-Hoon Kim
 Peter Murphy
 
-Story:
+Project Description:
+This application is designed to allow a user to build a database inventory of products.  Other
+information such as quantity, cost, and a thumbnail image are provided as supplementary data.
 
-Professor Ric is the owner of a bookstore. He is staring at his collection of books to sell to his students. He needs to take a picture of each book that he plans to sell. Each picture will be used for a thumbprint in his listing. He does not have much time to take a picture of each book, nor the knowledge of how to store the pictures in one location for future use. 
+Minimium SDK Version: 21
+Target SDK Version: 23
 
-Professor Ric opens his InvenStory application and takes a picture of each book cover. The application uses these pictures as a thumbnail with corresponding entry spaces for the title, author, and number of copies. He also suggests a price for each book.
 
-The application adds each book to a list, where he can easily see the thumbnail, title, author, quantity, and price of each book in his inventory. 
 
-Tasks:
 
-Task 1: Initiate Application
-Once the application starts, a welcome screen should come up with options to take a picture or browse the current list of items. 
+Completed Tasks:
 
-Task 2: Take a picture
-Once the user selects the option to take a picture, the app connects to thte device's camera and allows the user to take a picture. Once a picture is taken, it is stored as a thumbnail on the device. 
+Completed Task 1: Initiate Application
+Once the application starts, a welcome screen initiates. A login screen will pop-up if the user is
+not already authenticated with the application.
 
-Task 3: Create a New Element
-Create a new item in the application that has multiple fields for book, title, author, quantity, and suggested price. The application checks to see if this item already exists and gives option to update quantity. 
+Completed Task 2: Register User
+If the user is not already authenticated, they will be prompted to register or log in.
 
-Task 4: Receive and Store User Input Data
-Create text fields next to the thumbnail for the Title and Author. The user is responsible for entering this data. 
+Completed Task 3: Take a picture
+The user has the option to take a picture, the app connects to the device's camera and  allows the
+user to take a picture. Once a picture is taken, it is stored as a full image on the device.
 
-Task 5: Add to list
-The application stores each item in a list with a corresponding thumbnail. It is ready to add another item. 
+Completed Task 3: Create a New Element
+Create a new item in the application that has multiple fields for title, author, quantity, and
+price. The application checks to see if this item already exists and gives option to update
+quantity.
+
+Completed Task 4: Receive and Store User Input Data
+Create text fields in a list view for each field for item. The user is responsible for entering this
+data.
+
+Completed Task 5: Add to list
+The application stores each item in a list. It is ready to add another item. There is an option to
+update the database and go back to the homescreen.
+
+
+
+Changes from Initial Sprint:
++ Login Feature for Unique User
++ Register User into database
++ Splash Screen on Startup
+
+- Thumbnail picture not saved to new elements.
+- Does not check for duplicate items already in database.
+
+
+
+For a list of known issues and ongoing tasks, please refer to our issue tracker on GitLab:
+https://gitlab.oit.duke.edu/ECE651-Homework5/Rush_Hour_IV/issues
